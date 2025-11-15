@@ -1,10 +1,13 @@
-import { UrlCard } from "@/components/url-card"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Home() {
   return (
     <div>
       <main className="flex min-h-screen items-center justify-center">
-        <UrlCard />
+        <Button asChild>
+          <Link href="/analysis">Next</Link>
+        </Button>
       </main>
     </div>
   )

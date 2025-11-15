@@ -1,5 +1,7 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import z from "zod"
 
 const websiteSchema = z.object({
@@ -35,7 +37,7 @@ export async function analysisWebsite(prevState: State, formData: FormData) {
 
   console.log("Analyzing website:", url)
 
-  return {
-    message: "Website analysis started for " + url,
-  }
+  // Revalidate the cache for the result page and redirect the user.
+  revalidatePath("/result")
+  redirect("/result")
 }

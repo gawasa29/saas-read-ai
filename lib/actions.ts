@@ -49,9 +49,6 @@ export async function analysisWebsite(prevState: State, formData: FormData) {
       },
     })
 
-    console.log("Anthropic result:", result)
-    console.log("Anthropic result:", result.response)
-    console.log("Anthropic result:", result.text)
     return { errors: {}, message: result.text }
   } catch (error) {
     return {

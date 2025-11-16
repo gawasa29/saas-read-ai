@@ -37,6 +37,7 @@ export async function analysisWebsite(prevState: State, formData: FormData) {
   const { url } = validatedFields.data
 
   try {
+    // defaults to the ANTHROPIC_API_KEY environment variable.
     const model = anthropic("claude-sonnet-4-5-20250929")
 
     const userPrompt: string = await ANALYZE_AI_PROMPT(url)

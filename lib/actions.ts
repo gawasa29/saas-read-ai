@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+import { anthropic } from "@ai-sdk/anthropic"
+import { generateText } from "ai"
 import z from "zod"
+import { ANALYZE_AI_PROMPT } from "./prompt/analyze-ai-prompt"
 
 const websiteSchema = z.object({
   url: z.httpUrl(),
@@ -35,9 +36,26 @@ export async function analysisWebsite(prevState: State, formData: FormData) {
 
   const { url } = validatedFields.data
 
-  console.log("Analyzing website:", url)
+  try {
+    const model = anthropic("claude-sonnet-4-5-20250929")
 
-  // Revalidate the cache for the result page and redirect the user.
-  revalidatePath("/result")
-  redirect("/result")
+    const userPrompt: string = await ANALYZE_AI_PROMPT(url)
+
+    const result = await generateText({
+      model: model,
+      prompt: userPrompt,
+      tools: {
+        web_fetch: anthropic.tools.webFetch_20250910({ maxUses: 1 }),
+      },
+    })
+
+    console.log("Anthropic result:", result)
+    console.log("Anthropic result:", result.response)
+    console.log("Anthropic result:", result.text)
+    return { errors: {}, message: result.text }
+  } catch (error) {
+    return {
+      message: "Error during website analysis. Please try again later.",
+    }
+  }
 }

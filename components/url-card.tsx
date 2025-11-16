@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
 import { analysisWebsite, State } from "@/lib/actions"
 import { useActionState } from "react"
 import { Button } from "./ui/button"
@@ -15,7 +16,10 @@ import { Input } from "./ui/input"
 
 export function UrlCard() {
   const initialState: State = { message: null, errors: {} }
-  const [state, formAction] = useActionState(analysisWebsite, initialState)
+  const [state, formAction, isPending] = useActionState(
+    analysisWebsite,
+    initialState
+  )
 
   return (
     <Card className="w-full max-w-md">
@@ -47,10 +51,24 @@ export function UrlCard() {
                 ))}
             </div>
             <Field>
-              <Button type="submit">analysis</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Spinner />
+                    Analyzing...
+                  </>
+                ) : (
+                  "Analysis"
+                )}
+              </Button>
             </Field>
           </FieldGroup>
         </form>
+        <div id="result" aria-live="polite" aria-atomic="true">
+          {state.message && (
+            <p className="whitespace-pre-wrap pt-4">{state.message}</p>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
